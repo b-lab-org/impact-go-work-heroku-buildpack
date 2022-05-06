@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# usage: bin/compile BUILD_DIR CACHE_DIR ENV_DIR
+
+BUILD_DIR="${1}"
+ENV_DIR="${3}"
+
+HEROKU_WORK_DIRECTIVES=""
+if [ -f "${ENV_DIR}/HEROKU_WORK_DIRECTIVES_FILE" ]; then
+	HEROKU_WORK_DIRECTIVES_FILE="$(cat "${ENV_DIR}/HEROKU_WORK_DIRECTIVES_FILE")"
+	HEROKU_WORK_DIRECTIVES="$(cat "${HEROKU_WORK_DIRECTIVES_FILE}")"
+else
+	echo "missing HEROKU_WORK_DIRECTIVES_FILE env variable"
+	exit 1
+fi
+
+sed -i "s/HEROKU_WORK_DIRECTIVES/${HEROKU_WORK_DIRECTIVES}/" "${BUILD_DIR}/go.work"

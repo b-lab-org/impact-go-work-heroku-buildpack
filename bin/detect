@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# usage: bin/detect BUILD_DIR
+
+BUILD_DIR="${1}"
+
+if [ -f "${BUILD_DIR}/go.work" ]; then
+	exit 0
+else
+	exit 1
+fi
