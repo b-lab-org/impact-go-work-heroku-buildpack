@@ -6,23 +6,23 @@ set -euo pipefail
 BUILD_DIR="${1}"
 ENV_DIR="${3}"
 
-HEROKU_WORK_DIRECTIVES=""
-if [ -f "${ENV_DIR}/HEROKU_WORK_DIRECTIVES_FILE" ]; then
-	HEROKU_WORK_DIRECTIVES="$(cat "${ENV_DIR}/HEROKU_WORK_DIRECTIVES_FILE")"
-else
-	echo "missing HEROKU_WORK_DIRECTIVES_FILE env variable"
-	echo "HEROKU_WORK_DIRECTIVES_FILE should be the path of a file relative to the project root"
-	exit 1
-fi
+function readRequiredEnvironmentVariable() {
+	ENV_VAR="${1}"
 
-HEROKU_WORK_PROCFILE=""
-if [ -f "${ENV_DIR}/HEROKU_WORK_PROCFILE" ]; then
-	HEROKU_WORK_PROCFILE="$(cat "${ENV_DIR}/HEROKU_WORK_PROCFILE")"
-else
-	echo "missing HEROKU_WORK_PROCFILE env variable"
-	echo "HEROKU_WORK_PROCFILE should be the path of a file relative to the project root (but not in the root)"
-	exit 1
-fi
+	if [ -f "${ENV_DIR}/${ENV_VAR}" ]; then
+		FILE_NAME="$(cat "${ENV_DIR}/${ENV_VAR}")"
+
+		if [ -f "${BUILD_DIR}/${FILE_NAME}" ]; then
+			cat "${BUILD_DIR}/${FILE_NAME}"
+		else
+			echo "${ENV_VAR} should contain the path of a file relative to the project root"
+			exit 2
+		fi
+	else
+		echo "missing ${ENV_VAR} env variable"
+		exit 1
+	fi
+}
 
 function sedi () {
     # sed uses a different arg to omit backups in mac vs linux.  Use this function to work on both.
@@ -41,8 +41,10 @@ function quoteSubstitution() {
 	printf %s "${REPLY%$'\n'}"
 }
 
-ESCAPED_DATA=$(quoteSubstitution "${HEROKU_WORK_DIRECTIVES}")
+HEROKU_WORK_DIRECTIVES="$(readRequiredEnvironmentVariable "HEROKU_WORK_DIRECTIVES_FILE")"
+HEROKU_WORK_PROCFILE="$(readRequiredEnvironmentVariable "HEROKU_WORK_PROCFILE")"
 
-echo "${ESCAPED_DATA}"
+ESCAPED_DATA="$(quoteSubstitution "${HEROKU_WORK_DIRECTIVES}")"
+
 sedi "s/HEROKU_WORK_DIRECTIVES/${ESCAPED_DATA}/" "${BUILD_DIR}/go.work"
-cp "${BUILD_DIR}/${HEROKU_WORK_PROCFILE}" "${BUILD_DIR}/Procfile"
+echo "${HEROKU_WORK_PROCFILE}" > "${BUILD_DIR}/Procfile"

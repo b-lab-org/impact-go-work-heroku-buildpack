@@ -1,2 +1,1 @@
-// +heroku goVersion go1.18
-// +heroku install ./cmd/...
+project/heroku-directives.txt
