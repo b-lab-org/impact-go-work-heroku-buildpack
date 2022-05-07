@@ -9,9 +9,10 @@ ENV_DIR="${3}"
 HEROKU_WORK_DIRECTIVES=""
 if [ -f "${ENV_DIR}/HEROKU_WORK_DIRECTIVES_FILE" ]; then
 	HEROKU_WORK_DIRECTIVES_FILE="$(cat "${ENV_DIR}/HEROKU_WORK_DIRECTIVES_FILE")"
-	HEROKU_WORK_DIRECTIVES="$(cat "${HEROKU_WORK_DIRECTIVES_FILE}")"
+	HEROKU_WORK_DIRECTIVES="$(cat "${BUILD_DIR}/${HEROKU_WORK_DIRECTIVES_FILE}")"
 else
 	echo "missing HEROKU_WORK_DIRECTIVES_FILE env variable"
+	echo "HEROKU_WORK_DIRECTIVES_FILE should be the path of a file relative to the project root"
 	exit 1
 fi
 
@@ -20,9 +21,18 @@ if [ -f "${ENV_DIR}/HEROKU_WORK_PROCFILE" ]; then
 	HEROKU_WORK_PROCFILE="$(cat "${ENV_DIR}/HEROKU_WORK_PROCFILE")"
 else
 	echo "missing HEROKU_WORK_PROCFILE env variable"
+	echo "HEROKU_WORK_PROCFILE should be the path of a file relative to the project root (but not in the root)"
 	exit 1
 fi
 
+function sedi () {
+    # sed uses a different arg to omit backups in mac vs linux.  Use this function to work on both.
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' "$@"
+    else
+        sed -i'' "$@"
+    fi
+}
 
-sed -i "s/HEROKU_WORK_DIRECTIVES/${HEROKU_WORK_DIRECTIVES}/" "${BUILD_DIR}/go.work"
-cp "${HEROKU_WORK_PROCFILE}" "${BUILD_DIR}/"
+sedi "s/HEROKU_WORK_DIRECTIVES/${HEROKU_WORK_DIRECTIVES}/" "${BUILD_DIR}/go.work"
+cp "${BUILD_DIR}/${HEROKU_WORK_PROCFILE}" "${BUILD_DIR}/"
