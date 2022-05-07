@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+SCRIPT_DIR=$(cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
+
+if "${ROOT}/bin/detect" "${SCRIPT_DIR}/fail"; then
+	echo "fail"
+else
+	echo "pass"
+fi
+
+if "${ROOT}/bin/detect" "${SCRIPT_DIR}/pass"; then
+	echo "pass"
+else
+	echo "fail"
+fi

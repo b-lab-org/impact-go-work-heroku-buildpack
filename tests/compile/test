@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+SCRIPT_DIR=$(cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
+BUILD_DIR="${SCRIPT_DIR}/build"
+
+function testSetup() {
+	SOURCE="${1}"
+	find "${BUILD_DIR}" ! -name '.gitkeep' -type f -exec rm -f {} +
+	cp -R "${SOURCE}/." "${BUILD_DIR}"
+}
+
+testSetup "${SCRIPT_DIR}/fail"
+if "${ROOT}/bin/compile" "${BUILD_DIR}" "." "${SCRIPT_DIR}/fail/env"; then
+	echo "fail"
+else
+	echo "pass"
+fi
+
+testSetup "${SCRIPT_DIR}/pass"
+if "${ROOT}/bin/compile" "${BUILD_DIR}" "." "${SCRIPT_DIR}/pass/env"; then
+	echo "pass"
+else
+	echo "fail"
+fi

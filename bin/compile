@@ -8,8 +8,7 @@ ENV_DIR="${3}"
 
 HEROKU_WORK_DIRECTIVES=""
 if [ -f "${ENV_DIR}/HEROKU_WORK_DIRECTIVES_FILE" ]; then
-	HEROKU_WORK_DIRECTIVES_FILE="$(cat "${ENV_DIR}/HEROKU_WORK_DIRECTIVES_FILE")"
-	HEROKU_WORK_DIRECTIVES="$(cat "${BUILD_DIR}/${HEROKU_WORK_DIRECTIVES_FILE}")"
+	HEROKU_WORK_DIRECTIVES="$(cat "${ENV_DIR}/HEROKU_WORK_DIRECTIVES_FILE")"
 else
 	echo "missing HEROKU_WORK_DIRECTIVES_FILE env variable"
 	echo "HEROKU_WORK_DIRECTIVES_FILE should be the path of a file relative to the project root"
@@ -34,5 +33,16 @@ function sedi () {
     fi
 }
 
-sedi "s/HEROKU_WORK_DIRECTIVES/${HEROKU_WORK_DIRECTIVES}/" "${BUILD_DIR}/go.work"
-cp "${BUILD_DIR}/${HEROKU_WORK_PROCFILE}" "${BUILD_DIR}/"
+function quoteSubstitution() {
+	# Solution sourced from stackoverflow
+	# https://stackoverflow.com/a/29613573/1211902
+
+	IFS= read -d '' -r < <(sed -e ':a' -e '$!{N;ba' -e '}' -e 's/[&/\]/\\&/g; s/\n/\\&/g' <<<"$1")
+	printf %s "${REPLY%$'\n'}"
+}
+
+ESCAPED_DATA=$(quoteSubstitution "${HEROKU_WORK_DIRECTIVES}")
+
+echo "${ESCAPED_DATA}"
+sedi "s/HEROKU_WORK_DIRECTIVES/${ESCAPED_DATA}/" "${BUILD_DIR}/go.work"
+cp "${BUILD_DIR}/${HEROKU_WORK_PROCFILE}" "${BUILD_DIR}/Procfile"

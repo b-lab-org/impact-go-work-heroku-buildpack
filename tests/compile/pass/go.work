@@ -1,0 +1,9 @@
+module testing
+
+go 1.18
+
+HEROKU_WORK_DIRECTIVES
+
+require (
+	golang.org/x/text v0.3.7
+)
