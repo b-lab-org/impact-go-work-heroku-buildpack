@@ -3,4 +3,4 @@ set -euo pipefail
 
 # usage: bin/release BUILD_DIR
 
-echo "no release"
+echo "--- {}"
