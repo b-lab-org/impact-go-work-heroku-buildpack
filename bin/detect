@@ -6,7 +6,11 @@ set -euo pipefail
 BUILD_DIR="${1}"
 
 if [ -f "${BUILD_DIR}/go.work" ]; then
-	exit 0
+	if grep -q "HEROKU_WORK_DIRECTIVES" "${BUILD_DIR}/go.work"; then
+		exit 0
+	else
+		exit 1
+	fi
 else
-	exit 1
+	exit 2
 fi
