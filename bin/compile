@@ -7,7 +7,7 @@ BUILD_DIR="${1}"
 ENV_DIR="${3}"
 
 function errcho() {
-	>&2 echo "${@}";
+	>&2 echo "${@}"
 }
 
 function readRequiredEnvironmentVariable() {
