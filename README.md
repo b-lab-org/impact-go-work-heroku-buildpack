@@ -24,9 +24,9 @@ The `project/heroku-directives.txt` file contains the following content
 // +heroku install ./cmd/...
 ```
 
-The `go.work` file also has the placeholder `HEROKU_WORK_DIRECTIVES` added.
+The `go.work` file also has the placeholder `//HEROKU_WORK_DIRECTIVES` added.
 
-The build will replace the placeholder variable `HEROKU_WORK_DIRECTIVES` with the content of the `project/heroku-directives.txt` file.
+The build will replace the placeholder variable `//HEROKU_WORK_DIRECTIVES` with the content of the `project/heroku-directives.txt` file.
 
 #### `HEROKU_WORK_PROCFILE`
 This variable points to a file containing the Heroku procfile contents.
