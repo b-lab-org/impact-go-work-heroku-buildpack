@@ -6,11 +6,13 @@ set -euo pipefail
 BUILD_DIR="${1}"
 
 if [ -f "${BUILD_DIR}/go.work" ]; then
-	if grep -q "HEROKU_WORK_DIRECTIVES" "${BUILD_DIR}/go.work"; then
+	if grep -q "//HEROKU_WORK_DIRECTIVES" "${BUILD_DIR}/go.work"; then
 		exit 0
 	else
+		echo "missing require string in go.work file : //HEROKU_WORK_DIRECTIVES"
 		exit 1
 	fi
 else
+	echo "missing required go.work file"
 	exit 2
 fi

@@ -50,5 +50,5 @@ HEROKU_WORK_PROCFILE="$(readRequiredEnvironmentVariable "HEROKU_WORK_PROCFILE")"
 
 ESCAPED_DATA="$(quoteSubstitution "${HEROKU_WORK_DIRECTIVES}")"
 
-sedi "s/HEROKU_WORK_DIRECTIVES/${ESCAPED_DATA}/" "${BUILD_DIR}/go.work"
+sedi "s/\/\/HEROKU_WORK_DIRECTIVES/${ESCAPED_DATA}/" "${BUILD_DIR}/go.work"
 echo "${HEROKU_WORK_PROCFILE}" > "${BUILD_DIR}/Procfile"
