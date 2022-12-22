@@ -70,6 +70,8 @@ ESCAPED_DATA="$(quoteSubstitution "${HEROKU_WORK_DIRECTIVES}")"
 sedi "s/\/\/HEROKU_WORK_DIRECTIVES/${ESCAPED_DATA}/" "${BUILD_DIR}/go.work"
 echo "${HEROKU_WORK_PROCFILE}" > "${BUILD_DIR}/Procfile"
 
+echo "reading pre compile"
+
 HEROKU_GO_PRE_COMPILE_FILE="$(readOptionalEnvironmentVariable "HEROKU_GO_PRE_COMPILE_FILE")"
 
 echo "read pre compile"
