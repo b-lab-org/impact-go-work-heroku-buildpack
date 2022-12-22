@@ -72,6 +72,9 @@ echo "${HEROKU_WORK_PROCFILE}" > "${BUILD_DIR}/Procfile"
 
 HEROKU_GO_PRE_COMPILE_FILE="$(readOptionalEnvironmentVariable "HEROKU_GO_PRE_COMPILE_FILE")"
 
+echo "$HEROKU_GO_PRE_COMPILE_FILE"
+
 if [[ -f "${HEROKU_GO_PRE_COMPILE_FILE}" ]]; then
+
 	echo "${HEROKU_GO_PRE_COMPILE_FILE}" > "${BUILD_DIR}/${HEROKU_GO_PRE_COMPILE_FILE}"
 fi
