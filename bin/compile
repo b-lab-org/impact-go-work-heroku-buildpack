@@ -74,7 +74,7 @@ HEROKU_GO_PRE_COMPILE_FILE="$(readOptionalEnvironmentVariable "HEROKU_GO_PRE_COM
 
 echo "$HEROKU_GO_PRE_COMPILE_FILE"
 
-if [[ -f "${HEROKU_GO_PRE_COMPILE_FILE}" ]]; then
+if [[ "${HEROKU_GO_PRE_COMPILE_FILE}" != "" ]]; then
 	echo "here"
 	echo "${HEROKU_GO_PRE_COMPILE_FILE}" > "${BUILD_DIR}/bin/${HEROKU_GO_PRE_COMPILE_FILE}"
 fi
