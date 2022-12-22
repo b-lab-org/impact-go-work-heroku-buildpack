@@ -28,6 +28,23 @@ function readRequiredEnvironmentVariable() {
 	fi
 }
 
+function readOptionalEnvironmentVariable() {
+	ENV_VAR="${1}"
+
+	if [ -f "${ENV_DIR}/${ENV_VAR}" ]; then
+		FILE_NAME="$(cat "${ENV_DIR}/${ENV_VAR}")"
+
+		if [ -f "${BUILD_DIR}/${FILE_NAME}" ]; then
+			cat "${BUILD_DIR}/${FILE_NAME}"
+		else
+			errcho "${ENV_VAR} should contain the path of a file relative to the project root"
+			exit 1
+		fi
+	else
+		cat ""
+	fi
+}
+
 function sedi () {
 	# sed uses a different arg to omit backups in mac vs linux.  Use this function to work on both.
 	if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -52,3 +69,9 @@ ESCAPED_DATA="$(quoteSubstitution "${HEROKU_WORK_DIRECTIVES}")"
 
 sedi "s/\/\/HEROKU_WORK_DIRECTIVES/${ESCAPED_DATA}/" "${BUILD_DIR}/go.work"
 echo "${HEROKU_WORK_PROCFILE}" > "${BUILD_DIR}/Procfile"
+
+HEROKU_GO_PRE_COMPILE_FILE="$(readOptionalEnvironmentVariable "HEROKU_GO_PRE_COMPILE_FILE")"
+
+if [[ -f "${HEROKU_GO_PRE_COMPILE_FILE}" ]]; then
+	echo "${HEROKU_GO_PRE_COMPILE_FILE}" > "${BUILD_DIR}/${HEROKU_GO_PRE_COMPILE_FILE}"
+fi
