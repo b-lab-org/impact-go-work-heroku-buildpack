@@ -41,7 +41,7 @@ function readOptionalEnvironmentVariable() {
 			exit 1
 		fi
 	else
-		cat ""
+		echo ""
 	fi
 }
 
